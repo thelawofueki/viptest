@@ -81,3 +81,12 @@ class Viptela(object):
             self.base_url, device_uuid
         )
         return self._get(url)
+
+    def get_device_maps(self):
+        url = '{0}/group/map/devices'
+        response = self._get(url).json()
+        try:
+            return response["data"]
+
+        except KeyError:
+            raise Exception("No data fetched from Viptela")
