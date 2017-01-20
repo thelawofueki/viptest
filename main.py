@@ -5,9 +5,9 @@ from viptela import Viptela
 
 
 def get_resources(event, context):
-    VIPTELA_USERNAME = event["credentials"]["user"]
-    VIPTELA_PSWD = event["credentials"]["user_pass"]
-    VIPTELA_SERVER = event["credentials"]["server"]
+    VIPTELA_USERNAME = event["credentials"]["username"]
+    VIPTELA_PSWD = event["credentials"]["password"]
+    VIPTELA_SERVER = "54.251.162.192"
     # vip_cli = Viptela(VIPTELA_USERNAME, VIPTELA_PSWD, VIPTELA_SERVER)
     # devices = vip_cli.get_devices()
     devices = [
