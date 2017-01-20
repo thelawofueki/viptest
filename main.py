@@ -54,12 +54,13 @@ def format_resource(resource):
             },
         },
         "metadata": {
-            "deviceModel": resource.get("deviceModel", ""),
-            "deviceState": resource.get("deviceState", ""),
-            "chasisNumber": resource.get("chasisNumber", ""),
-            "uuid": resource.get("uuid", ""),
-            "serialNumber": resource.get("serialNumber", ""),
-            "site-id": resource.get("site-id", ""),
-
+            "provider_specific": {
+                "deviceModel": resource.get("deviceModel", ""),
+                "deviceState": resource.get("deviceState", ""),
+                "chasisNumber": resource.get("chasisNumber", ""),
+                "uuid": resource.get("uuid", ""),
+                "serialNumber": resource.get("serialNumber", ""),
+                "site-id": resource.get("site-id", ""),
+            },
         }
     }
