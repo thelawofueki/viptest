@@ -25,7 +25,7 @@ def format_resource(resource):
     )
     return {
         'base': {
-            'name': 'ncsDeviceName 1',
+            'name': resource.get("host-name"),
             'provider_created_at': datetime.utcnow().isoformat() + "Z"
         },
         'id': str(uuid4()),
