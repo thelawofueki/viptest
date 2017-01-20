@@ -1,7 +1,11 @@
 # Nflex Training demo script
 from datetime import datetime
-from uuid import uuid4
 from viptela import Viptela
+import metrics
+
+
+def get_metrics(event, context):
+    return metrics.get_metrics(event, context)
 
 
 def get_resources(event, context):
@@ -16,7 +20,10 @@ def get_resources(event, context):
 
 def format_resources(resources):
     for resource in resources:
-        yield format_resource(resource)
+        try:
+            yield format_resource(resource)
+        except KeyError:
+            continue
 
 
 def format_resource(resource):
@@ -28,7 +35,7 @@ def format_resource(resource):
             'name': resource.get("host-name"),
             'provider_created_at': datetime.utcnow().isoformat() + "Z"
         },
-        'id': str(uuid4()),
+        'id': resource["deviceIP"],
         'type': 'server',
         'details': {
             'server': {
