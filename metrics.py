@@ -15,9 +15,15 @@ def get_metrics(event, context):
     data = vip_cli.get_device_metrics(event["resource"]["provider_id"])
     print "Fetched %d data samples from Viptela" % len(data)
     if data:
-        return list(format_metrics(data))
+        metrics = list(format_metrics(data))
+        return {
+            "last_update": metrics[-1]["time"],
+            "metrics": metrics,
+        }
 
-    return []
+    return {
+        "metrics": []
+    }
 
 
 def format_metrics(data):
