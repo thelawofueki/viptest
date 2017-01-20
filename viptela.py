@@ -1,5 +1,5 @@
 import requests
-from collection import namedtuple
+from collections import namedtuple
 
 
 HTTP_RESPONSE_CODES = {
