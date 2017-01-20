@@ -8,28 +8,8 @@ def get_resources(event, context):
     VIPTELA_USERNAME = event["credentials"]["username"]
     VIPTELA_PSWD = event["credentials"]["password"]
     VIPTELA_SERVER = "54.251.162.192"
-    # vip_cli = Viptela(VIPTELA_USERNAME, VIPTELA_PSWD, VIPTELA_SERVER)
-    # devices = vip_cli.get_devices()
-    devices = [
-        {
-            "deviceIP": "1.1.1.0",
-            "device-model": "vedge-1000",
-            "host-name": "LAB_VE1",
-            "serialNumber": "10001106",
-        },
-        {
-            "deviceIP": "10.1.1.20",
-            "device-model": "hostvedge-100-WM",
-            "host-name": "JG-VE-HOME",
-            "serialNumber": "10009E34",
-        },
-        {
-            "deviceIP": "10.1.1.30",
-            "device-model": "vedge-cloud",
-            "host-name": "JG-VE-CLOUD",
-            "serialNumber": "17A4459533462B5478819BAC03D17D49",
-        },
-    ]
+    vip_cli = Viptela(VIPTELA_USERNAME, VIPTELA_PSWD, VIPTELA_SERVER)
+    devices = vip_cli.get_devices()
     print "Fetched %d resources from Viptela" % len(devices)
     return list(format_resources(devices))
 
@@ -40,6 +20,9 @@ def format_resources(resources):
 
 
 def format_resource(resource):
+    state = (
+        "running" if resource.get("deviceState") == "valid" else "unknown"
+    )
     return {
         'base': {
             'name': 'ncsDeviceName 1',
@@ -49,6 +32,7 @@ def format_resource(resource):
         'type': 'server',
         'details': {
             'server': {
+                "state": state,
                 "template": {
                     "id": resource.get("templateId", ""),
                     "name": resource.get("template", ""),
