@@ -10,63 +10,69 @@ HTTP_RESPONSE_CODES = {
     500: 'Internal Server Error'
 }
 
-Response = namedtuple('Response',[
+Response = namedtuple('Response', [
     'data', 'error', 'response',
     ])
 
 
 class Viptela(object):
 
-    @staticmethod
     def parse_response():
         pass
 
-    @staticmethod
-    def _get(session, url, headers=None):
+    def _get(self, url, headers=None):
         if headers is None:
-            headers = {'Connection': 'keep-alive', 'Content-Type': 'application/json'}
+            headers = {
+                'Connection': 'keep-alive',
+                'Content-Type': 'application/json'
+            }
+        return self.session.get(url=url, headers=headers)
 
-        return session.get(url=url, headers=headers)
+    def _put(self, url, headers, data):
+        return self.session.put(url=url, headers=headers, data=data)
 
-    @staticmethod
-    def _put(session, url, headers, data):
-        pass
-
-    @staticmethod
-    def _post(session, url, headers, data):
+    def _post(self, url, headers, data):
         # munge and return something
-        return session.post(url=url, headers=headers, data=data)
+        return self.session.post(url=url, headers=headers, data=data)
 
-    @staticmethod
-    def _delete(session, url, headers, data):
-        pass
+    def _delete(self, url, headers, data):
+        return self.session.delete(url=url, headers=headers, data=data)
 
-    def __init__(self, user, user_pass, vmanage_server, vmanage_server_port=8443, verify=False):
+    def __init__(self,
+                 user,
+                 user_pass,
+                 vmanage_server,
+                 vmanage_server_port=443,
+                 verify=False):
         self.user = user
         self.user_pass = user_pass
         self.vmanage_server = vmanage_server
         self.vmanage_server_port = vmanage_server_port
         self.verify = verify
 
-        self.base_url = 'https://{0}:{1}/dataservice'.format(self.vmanage_server,
-            self.vmanage_server_port)
+        self.base_url = 'https://{0}/dataservice'.format(
+            self.vmanage_server, self.vmanage_server_port
+        )
 
         self.session = requests.session()
         if not self.verify:
             self.session.verify = self.verify
 
         # login
-        self.login_result = Viptela._post(session=self.session,
+        self.login_result = self._post(
             url='{0}/j_security_check'.format(self.base_url),
             headers={'Content-Type': 'application/x-www-form-urlencoded'},
-            data={'j_username': self.user, 'j_password': self.user_pass})
+            data={'j_username': self.user, 'j_password': self.user_pass}
+        )
 
     def get_devices(self, device_type='vedges'):
         if device_type not in ['vedges', 'controllers']:
             raise ValueError('Invalid device type: {0}'.format(device_type))
         url = '{0}/system/device/{1}'.format(self.base_url, device_type)
-        return Viptela._get(self.session, url)
+        return self._get(url)
 
     def get_running_config(self, device_uuid):
-        url = '{0}/template/config/running/{1}'.format(self.base_url, device_uuid)
-        return Viptela._get(self.session, url)
+        url = '{0}/template/config/running/{1}'.format(
+            self.base_url, device_uuid
+        )
+        return self._get(url)
