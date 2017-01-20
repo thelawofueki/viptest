@@ -69,7 +69,12 @@ class Viptela(object):
         if device_type not in ['vedges', 'controllers']:
             raise ValueError('Invalid device type: {0}'.format(device_type))
         url = '{0}/system/device/{1}'.format(self.base_url, device_type)
-        return self._get(url)
+        response = self._get(url).json()
+        try:
+            return response["data"]
+
+        except KeyError:
+            raise Exception("No data fetched from Viptela")
 
     def get_running_config(self, device_uuid):
         url = '{0}/template/config/running/{1}'.format(
