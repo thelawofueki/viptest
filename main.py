@@ -1,12 +1,13 @@
 # Nflex Training demo script
-from viptela import Viptela  # noqa
+from datetime import datetime
+from uuid import uuid4
+from viptela import Viptela
 
 
 def get_resources(event, context):
     VIPTELA_USERNAME = event["credentials"]["user"]
     VIPTELA_PSWD = event["credentials"]["user_pass"]
     VIPTELA_SERVER = event["credentials"]["server"]
-    print VIPTELA_USERNAME, VIPTELA_PSWD, VIPTELA_SERVER
     # vip_cli = Viptela(VIPTELA_USERNAME, VIPTELA_PSWD, VIPTELA_SERVER)
     # devices = vip_cli.get_devices()
     devices = [
@@ -39,20 +40,42 @@ def format_resources(resources):
 
 
 def format_resource(resource):
-    print resource
-    resource.get('deviceIP', ''),
-    resource.get('device-model', ''),
-    resource.get('host-name', ''),
-    resource.get('serialNumber', '')
     return {
         'base': {
-            'name': 'Server 1',
-            'provider_created_at': '2017-01-01T12:00:00.000000Z'
+            'name': 'ncsDeviceName 1',
+            'provider_created_at': datetime.utcnow().isoformat() + "Z"
         },
-        'id': '00000000-0000-0000-0000-100000000001',
-        'type': 'network',
+        'id': str(uuid4()),
+        'type': 'server',
         'details': {
             'server': {
+                "template": {
+                    "id": resource.get("templateId", ""),
+                    "name": resource.get("template", ""),
+                },
+                "ip_addresses": [
+                    {
+                        "ip_address": resource.get("deviceIP", "N/A"),
+                        "description": "deviceIP",
+                    },
+                    {
+                        "ip_address": resource.get("system-ip", "N/A"),
+                        "description": "system-ip",
+                    },
+                    {
+                        "ip_address": resource.get("vbond", "N/A"),
+                        "description": "vbond",
+                    },
+                ]
             },
         },
+        "metadata": {
+            "deviceModel": resource.get("deviceModel", ""),
+            "deviceState": resource.get("deviceState", ""),
+            "chasisNumber": resource.get("chasisNumber", ""),
+            "uuid": resource.get("uuid", ""),
+            "serialNumber": resource.get("serialNumber", ""),
+            "site-id": resource.get("site-id", ""),
+
+        }
     }
